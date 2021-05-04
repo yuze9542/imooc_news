@@ -13,6 +13,7 @@
         <module>imooc-news-dev-service-api</module>
         <module>imooc-news-dev-server-user</module>
         <module>imooc-news-dev-service-files</module>
+        <module>imooc-news-service-admin</module>
     </modules>
 
 

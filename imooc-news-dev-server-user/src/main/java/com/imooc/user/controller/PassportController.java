@@ -49,8 +49,6 @@ public class PassportController extends BaseController implements PassportContro
     @Autowired
     public UserService userService;
 
-    @Value("${website.domain-name}")
-    public String DOMAIN_NAME;
 
     @Override
     public GraceJSONResult getSMSCode(String mobile,
@@ -135,44 +133,5 @@ public class PassportController extends BaseController implements PassportContro
         return GraceJSONResult.ok();
     }
 
-    // 设置cookies
-    public void setCookie(HttpServletRequest request,
-                            HttpServletResponse response,
-                            String cookieName,
-                            String cookieValue,
-                            Integer maxAge
-    ){
-        try{
-            cookieValue = URLEncoder.encode(cookieValue,"utf-8");
-            setCookieValue(request,response,cookieName,cookieValue,maxAge);
-        }catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-        }
-    }
 
-    public void setCookieValue(HttpServletRequest request,
-                                HttpServletResponse response,
-                                String cookieName,
-                                String cookieValue,
-                                Integer maxAge){
-        Cookie cookie = new Cookie(cookieName,cookieValue);
-        cookie.setMaxAge(maxAge);
-        cookie.setDomain(DOMAIN_NAME);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
-
-    // 获取BO中错误信息
-    private Map<String, String> getErrors(BindingResult result){
-        Map<String,String> map = new HashMap<>();
-        List<FieldError> fieldError = result.getFieldErrors();
-        for(FieldError error:fieldError){
-            // 发送验证错误的时候所对应的某个属性
-            String field = error.getField();
-            // 7验证的错误消息
-            String msg = error.getDefaultMessage();
-            map.put(field,msg);
-        }
-        return map;
-    }
 }

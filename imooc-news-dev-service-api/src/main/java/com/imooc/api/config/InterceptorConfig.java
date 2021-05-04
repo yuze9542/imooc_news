@@ -1,5 +1,6 @@
 package com.imooc.api.config;
 
+import com.imooc.api.interceptors.AdminTokenInterceptor;
 import com.imooc.api.interceptors.PassportInterceptor;
 import com.imooc.api.interceptors.UserActiveInterceptor;
 import com.imooc.api.interceptors.UserTokenInterceptor;
@@ -19,6 +20,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean
     public UserTokenInterceptor userTokenInterceptor(){
         return new UserTokenInterceptor();
+    }
+
+    @Bean
+    public AdminTokenInterceptor adminTokenInterceptor(){
+        return new AdminTokenInterceptor();
     }
 
     @Bean
@@ -42,5 +48,18 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
 //        registry.addInterceptor(userActiveInterceptor())
 //                .addPathPatterns("/user/getAccountInfo");
+
+        registry.addInterceptor(adminTokenInterceptor())
+                .addPathPatterns("/adminMng/addNewAdmin")
+                .addPathPatterns("/adminMng/addNewAdmin")
+                .addPathPatterns("/adminMng/getAdminList");
+//                .addPathPatterns("/fs/uploadToGridFS")
+//                .addPathPatterns("/fs/readInGridFS")
+//                .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
+//                .addPathPatterns("/friendLinkMng/getFriendLinkList")
+//                .addPathPatterns("/friendLinkMng/delete")
+//                .addPathPatterns("/categoryMng/saveOrUpdateCategory")
+//                .addPathPatterns("/categoryMng/getCatList");
+
     }
 }

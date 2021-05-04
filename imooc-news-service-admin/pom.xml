@@ -8,27 +8,18 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-<!--    文件服务 文件相关操作:    文件上传 文件下载
-            fastdfs oss gridfs-->
-    <artifactId>imooc-news-dev-service-files</artifactId>
-    <dependencies>
 
+    <artifactId>imooc-news-service-admin</artifactId>
+
+    <dependencies>
         <dependency>
             <groupId>com.imooc</groupId>
             <artifactId>imooc-news-dev-service-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-<!--        文件上传fdfs工具-->
-        <dependency>
-            <groupId>com.github.tobato</groupId>
-            <artifactId>fastdfs-client</artifactId>
-        </dependency>
-<!--热部署-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
     </dependencies>
-
 </project>
