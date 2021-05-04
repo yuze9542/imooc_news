@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -12,6 +13,7 @@
         <module name="imooc-news-dev-service-api" />
         <module name="imooc-news-dev-server-user" />
         <module name="imooc-news-dev-common" />
+        <module name="imooc-news-dev-service-files" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -27,6 +29,7 @@
       <module name="imooc-news-dev-model" options="-parameters" />
       <module name="imooc-news-dev-server-user" options="-parameters" />
       <module name="imooc-news-dev-service-api" options="-parameters" />
+      <module name="imooc-news-dev-service-files" options="-parameters" />
       <module name="imooc-news-dev-service-user" options="-parameters" />
     </option>
   </component>

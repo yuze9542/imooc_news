@@ -30,7 +30,7 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
 <!--        mapper逆向工具-->
-        <dependency>+
+        <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
         </dependency>

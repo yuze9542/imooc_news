@@ -1,0 +1,5 @@
+spring:
+  redis:
+    host: 1.15.44.134
+    password: yuze123
+    port: 6379
