@@ -1,9 +1,6 @@
 package com.imooc.api.config;
 
-import com.imooc.api.interceptors.AdminTokenInterceptor;
-import com.imooc.api.interceptors.PassportInterceptor;
-import com.imooc.api.interceptors.UserActiveInterceptor;
-import com.imooc.api.interceptors.UserTokenInterceptor;
+import com.imooc.api.interceptors.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -21,6 +18,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public UserTokenInterceptor userTokenInterceptor(){
         return new UserTokenInterceptor();
     }
+
+//    @Bean
+//    public AdminCookieTokenInterceptor adminCookieTokenInterceptor(){
+//        return new AdminCookieTokenInterceptor();
+//    }
 
     @Bean
     public AdminTokenInterceptor adminTokenInterceptor(){
@@ -48,13 +50,15 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
 //        registry.addInterceptor(userActiveInterceptor())
 //                .addPathPatterns("/user/getAccountInfo");
-
-        registry.addInterceptor(adminTokenInterceptor())
-                .addPathPatterns("/adminMng/addNewAdmin")
-                .addPathPatterns("/adminMng/addNewAdmin")
-                .addPathPatterns("/adminMng/getAdminList");
+//        registry.addInterceptor(adminCookieTokenInterceptor())
 //                .addPathPatterns("/fs/uploadToGridFS")
-//                .addPathPatterns("/fs/readInGridFS")
+//                .addPathPatterns("/fs/readInGridFS");
+        registry.addInterceptor(adminTokenInterceptor())
+                .addPathPatterns("/adminMng/adminIsExist")
+                .addPathPatterns("/adminMng/addNewAdmin")
+                .addPathPatterns("/adminMng/getAdminList")
+                .addPathPatterns("/fs/uploadToGridFS")
+                .addPathPatterns("/fs/readInGridFS");
 //                .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
 //                .addPathPatterns("/friendLinkMng/getFriendLinkList")
 //                .addPathPatterns("/friendLinkMng/delete")

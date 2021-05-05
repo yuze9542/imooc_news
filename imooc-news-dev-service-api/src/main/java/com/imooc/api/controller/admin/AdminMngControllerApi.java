@@ -45,4 +45,10 @@ public interface AdminMngControllerApi {
     public GraceJSONResult adminLogout(@RequestParam String adminId,
                                        HttpServletRequest request,
                                        HttpServletResponse response);
+
+    @ApiOperation(value = "admin人脸登录",httpMethod = "POST")
+    @PostMapping("/adminFaceLogin")
+    public GraceJSONResult adminFaceLogin(@RequestBody AdminLoginBO bo,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response) throws Exception;
 }

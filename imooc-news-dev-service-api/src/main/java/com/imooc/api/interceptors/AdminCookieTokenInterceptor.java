@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
  * 拦截器
  */
 
-public class AdminTokenInterceptor extends BaseInterceptor implements HandlerInterceptor {
+public class AdminCookieTokenInterceptor extends BaseInterceptor implements HandlerInterceptor {
 
 
 
@@ -25,17 +25,10 @@ public class AdminTokenInterceptor extends BaseInterceptor implements HandlerInt
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // false: 请求拦截  ture 请求通过验证 放行
-
-        String adminUserId = request.getHeader("adminUserId");
-        String adminUserToken = request.getHeader("adminUserToken");
-
-        System.out.println("=====================================================================");
-        System.out.println("AdminTokenInterceptor - adminUserId = " + adminUserId);
-        System.out.println("AdminTokenInterceptor - adminUserToken = " + adminUserToken);
-        System.out.println("=====================================================================");
-
+        String adminUserId = getCookie(request, "aid");
+        String adminUserToken = getCookie(request, "atoken");
         boolean run = verifyUserIdToken(adminUserId, adminUserToken, REDIS_ADMIN_TOKEN);
-        return run;
+        return run;    // 放行
     }
 
     /**
