@@ -21,7 +21,7 @@ public interface CommentsControllerApi {
     public GraceJSONResult createComment(@RequestBody @Valid CommentReplyBO bo,
                                          BindingResult result);
 
-    @GetMapping("/commentCounts")
+    @GetMapping("/counts")
     @ApiOperation(value = "用户评论数", notes = "用户发表评论", httpMethod = "GET")
     public GraceJSONResult commentCounts(@RequestParam String articleId);
 
@@ -31,4 +31,16 @@ public interface CommentsControllerApi {
                                 @RequestParam Integer page,
                                 @RequestParam Integer pageSize);
 
+    @PostMapping("/mng")
+    @ApiOperation(value = "查询我的评论管理列表", notes = "用户发表评论", httpMethod = "POST")
+    public GraceJSONResult mng(@RequestParam String writerId,
+                               @ApiParam(name = "page", value = "查询下一页的第几页",required = false)
+                               @RequestParam Integer page,
+                               @ApiParam(name = "pageSize", value = "分页查询每一页显示的条数",required = false)
+                               @RequestParam Integer pageSize);
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "作者删除评论", notes = "用户发表评论", httpMethod = "POST")
+    public GraceJSONResult delete(@RequestParam String writerId,
+                               @RequestParam String commentId);
 }

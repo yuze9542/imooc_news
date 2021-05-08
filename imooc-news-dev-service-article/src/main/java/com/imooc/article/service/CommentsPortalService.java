@@ -13,8 +13,13 @@ public interface CommentsPortalService {
                                String fatherCommentId,
                                String content,
                                String userId,
-                               String nickname);
+                               String nickname,
+                               String face);
 
     public PagedGridResult queryArticleComments(String articleId,
                                                 Integer page, Integer pageSize);
+
+    public PagedGridResult  queryCommentsByWriterId(String writerId, Integer page, Integer pageSize);
+
+    public void deleteCommentByWriter(String writerId, String commentId);
 }

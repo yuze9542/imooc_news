@@ -36,7 +36,9 @@ public class CommentsPortalServiceImpl extends BaseService implements CommentsPo
 
     @Override
     @Transactional
-    public void createComments(String articleId, String fatherCommentId, String content, String userId, String nickname) {
+    public void createComments(String articleId, String fatherCommentId,
+                               String content, String userId, String nickname,
+                               String face) {
 
         ArticleDetailVO articleDetailVO = articlePortalService.queryDetail(articleId);
         Comments comments = new Comments();
@@ -49,6 +51,7 @@ public class CommentsPortalServiceImpl extends BaseService implements CommentsPo
         comments.setArticleCover(articleDetailVO.getCover());
         comments.setArticleId(articleId);
         comments.setFatherId(fatherCommentId);
+        comments.setCommentUserFace(face);
 
         comments.setCommentUserId(userId);
         comments.setCommentUserNickname(nickname);
@@ -72,5 +75,33 @@ public class CommentsPortalServiceImpl extends BaseService implements CommentsPo
         List<CommentsVO> list = commentsCustomMapper.queryArticleCommentList(map);
 
         return setterPagedGrid(list,page);
+    }
+
+    @Override
+    public PagedGridResult queryCommentsByWriterId(String writerId, Integer page, Integer pageSize) {
+
+        Comments comment = new Comments();
+        comment.setWriterId(writerId);
+
+        PageHelper.startPage(page,pageSize);
+
+        List<Comments> list = commentsMapper.select(comment);
+
+        return setterPagedGrid(list,page);
+    }
+
+    @Override
+    public void deleteCommentByWriter(String writerId, String commentId) {
+
+        Comments c = new Comments();
+        c.setId(commentId);
+        Comments result = commentsMapper.selectOne(c);
+        String articleId = result.getArticleId();
+
+        Comments comment = new Comments();
+        comment.setWriterId(writerId);
+        comment.setId(commentId);
+        commentsMapper.delete(comment);
+        redis.decrement(REDIS_ARTICLE_COMMENT_COUNTS+":"+articleId,1);
     }
 }

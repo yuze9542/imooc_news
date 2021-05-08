@@ -41,14 +41,16 @@ public class CommentsController extends BaseController implements CommentsContro
         // 3 发起restTemplate请求
         Set<String> idSet = new HashSet<>();
         idSet.add(userId);
-        String nickname = getPublisherList(idSet).get(0).getNickname();
+        AppUserVO v = getPublisherList(idSet).get(0);
+        String nickname = v.getNickname();
+        String face = v.getFace();
 
         // 4 信息保存到数据库
         commentsPortalService.createComments(bo.getArticleId(),
                 bo.getFatherId(),
                 bo.getContent(),
                 userId,
-                nickname);
+                nickname,face);
 
         return GraceJSONResult.ok();
     }
@@ -67,6 +69,22 @@ public class CommentsController extends BaseController implements CommentsContro
             pageSize = 10;
         PagedGridResult gridResult = commentsPortalService.queryArticleComments(articleId, page, pageSize);
         return GraceJSONResult.ok(gridResult);
+    }
+
+    @Override
+    public GraceJSONResult mng(String writerId, Integer page, Integer pageSize) {
+        if (page == null)
+            page = 1;
+        if (pageSize == null)
+            pageSize = 10;
+        PagedGridResult gridResult = commentsPortalService.queryCommentsByWriterId(writerId, page, pageSize);
+        return GraceJSONResult.ok(gridResult);
+    }
+
+    @Override
+    public GraceJSONResult delete(String writerId, String commentId) {
+        commentsPortalService.deleteCommentByWriter(writerId,commentId);
+        return GraceJSONResult.ok();
     }
 
 }
