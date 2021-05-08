@@ -13,10 +13,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public PassportInterceptor passportInterceptor(){
         return new PassportInterceptor();
     }
-
     @Bean
     public UserTokenInterceptor userTokenInterceptor(){
         return new UserTokenInterceptor();
+    }
+    @Bean
+    public ArticleReadInterceptor articleReadInterceptor(){
+        return new ArticleReadInterceptor();
     }
 
 //    @Bean
@@ -42,7 +45,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportInterceptor())
-        .addPathPatterns("/passport/getSMSCode");
+                .addPathPatterns("/passport/getSMSCode");
+        registry.addInterceptor(articleReadInterceptor())
+                .addPathPatterns("/portal/article/readArticle");
 
         registry.addInterceptor(userTokenInterceptor())
                 .addPathPatterns("/user/getAccountInfo")

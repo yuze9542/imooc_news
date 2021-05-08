@@ -17,6 +17,8 @@ public class BaseInterceptor {
     public static final String REDIS_USER_TOKEN = "redis_user_token";
     public static final String REDIS_USER_INFO = "redis_user_info";
     public static final String REDIS_ADMIN_TOKEN = "redis_admin_info";
+    public static final String REDIS_ARTICLE_READ_COUNTS = "redis_article_read_counts";
+    public static final String REDIS_ALREADY_READ = "redis_already_read";
 
 
     public boolean verifyUserIdToken(String id, String token,String redisKeyPrefix){

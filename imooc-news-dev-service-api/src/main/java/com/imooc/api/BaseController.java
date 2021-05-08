@@ -1,12 +1,17 @@
 package com.imooc.api;
 
 
+import com.imooc.grace.result.GraceJSONResult;
+import com.imooc.pojo.vo.AppUserVO;
+import com.imooc.utils.JsonUtils;
 import com.imooc.utils.RedisOperator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +21,11 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BaseController {
+    @Autowired
+    private RestTemplate restTemplate;
     @Autowired
     public RedisOperator redis;
     @Value("${website.domain-name}")
@@ -32,6 +40,7 @@ public class BaseController {
     public static final String REDIS_ALL_CATEGORY = "redis_all_category";
     public static final String REDIS_ARTICLE_READ_COUNTS = "redis_article_read_counts";
     public static final String REDIS_ALREADY_READ = "redis_already_read";
+    public static final String REDIS_ARTICLE_COMMENT_COUNTS = "redis_article_comment_counts";
 
     public static final Integer COOKIE_MONTH = 30 * 24 * 60 * 60;
     public static final Integer COOKIE_DELETE = 0;
@@ -92,5 +101,16 @@ public class BaseController {
             s = "0";
         }
         return Integer.parseInt(s);
+    }
+
+    public List<AppUserVO> getPublisherList (Set idSet){
+        String url = "http://user.imoocnews.com:8003/user/getUserByIds?userIds="+ JsonUtils.objectToJson(idSet);
+        ResponseEntity<GraceJSONResult> forEntity = restTemplate.getForEntity(url, GraceJSONResult.class);
+        List<AppUserVO> publisherList = null;
+        if (forEntity.getBody().getStatus() == 200){
+            String userJson = JsonUtils.objectToJson(forEntity.getBody().getData());
+            publisherList = JsonUtils.jsonToList(userJson, AppUserVO.class);
+        }
+        return publisherList;
     }
 }
