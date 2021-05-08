@@ -41,4 +41,12 @@ public interface UserControllerApi {
     public GraceJSONResult updateUserInfo(@RequestBody @Valid UpdateUserInfoBO updateUserInfoBO,
                                           BindingResult result);
 
+    /**
+     * restTemplate
+     * @return
+     */
+    @GetMapping("/getUserByIds")
+    @ApiOperation(value = "查询用户的ids查询用户列表",httpMethod = "GET")
+    public GraceJSONResult getUserByIds(@RequestParam String userIds);
+
 }

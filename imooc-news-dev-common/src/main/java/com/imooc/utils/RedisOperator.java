@@ -123,6 +123,10 @@ public class RedisOperator {
 		redisTemplate.opsForValue().setIfAbsent(key, value, 60, TimeUnit.SECONDS);
 	}
 
+	public void setnx60m(String key, String value) {
+		redisTemplate.opsForValue().setIfAbsent(key, value, 60*60, TimeUnit.SECONDS);
+	}
+
 	/**
 	 * 如果key不存在，则设置，如果存在，则报错
 	 * @param key

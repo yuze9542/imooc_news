@@ -46,10 +46,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(userTokenInterceptor())
                 .addPathPatterns("/user/getAccountInfo")
-                .addPathPatterns("/user/updateUserInfo");
+                .addPathPatterns("/user/updateUserInfo")
+                .addPathPatterns("/fs/uploadFace")
+                .addPathPatterns("/fs/uploadSomeFiles")
+                .addPathPatterns("/fans/follow")
+                .addPathPatterns("/fans/unfollow");
 
-//        registry.addInterceptor(userActiveInterceptor())
-//                .addPathPatterns("/user/getAccountInfo");
+        registry.addInterceptor(userActiveInterceptor())
+                .addPathPatterns("/fs/uploadSomeFiles");
 //        registry.addInterceptor(adminCookieTokenInterceptor())
 //                .addPathPatterns("/fs/uploadToGridFS")
 //                .addPathPatterns("/fs/readInGridFS");
@@ -58,12 +62,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/adminMng/addNewAdmin")
                 .addPathPatterns("/adminMng/getAdminList")
                 .addPathPatterns("/fs/uploadToGridFS")
-                .addPathPatterns("/fs/readInGridFS");
-//                .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
-//                .addPathPatterns("/friendLinkMng/getFriendLinkList")
-//                .addPathPatterns("/friendLinkMng/delete")
-//                .addPathPatterns("/categoryMng/saveOrUpdateCategory")
-//                .addPathPatterns("/categoryMng/getCatList");
+                .addPathPatterns("/fs/readInGridFS")
+                .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
+                .addPathPatterns("/friendLinkMng/getFriendLinkList")
+                .addPathPatterns("/friendLinkMng/delete")
+                .addPathPatterns("/categoryMng/saveOrUpdateCategory")
+                .addPathPatterns("/categoryMng/getCatList");
 
     }
 }

@@ -15,7 +15,7 @@ import java.util.Date;
  * 友情链接
  */
 @Data
-public class SaveFriendBO {
+public class SaveFriendLinkBO {
 
     private String id;
 
@@ -26,7 +26,7 @@ public class SaveFriendBO {
     @NotBlank(message = "友情链接地址不能为空")
     private String linkUrl;
 
-    @NotBlank(message = "选择保留或删除")
-    private String idDelete;
+    @NotNull(message = "请选择保留或删除")
+    private Integer isDelete;
 
 }

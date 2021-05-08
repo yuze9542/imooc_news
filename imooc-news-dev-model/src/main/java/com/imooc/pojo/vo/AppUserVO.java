@@ -11,4 +11,7 @@ public class AppUserVO {
     private String nickname;
     private String face;
     private Integer activeStatus;
+
+    private Integer myFollowCounts;
+    private Integer myFansCounts;
 }

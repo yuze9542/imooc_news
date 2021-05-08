@@ -13,12 +13,11 @@
             <property name="mappers" value="com.imooc.my.mapper.MyMapper"/>
         </plugin>
 
-        <jdbcConnection driverClass="com.cj.mysql.jdbc.Driver"
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
                         connectionURL="jdbc:mysql://1.15.44.134:3306/imooc_news_dev"
                         userId="yuze"
                         password="root">
         </jdbcConnection>
-
         <!-- 对应生成的pojo所在包 -->
         <javaModelGenerator targetPackage="com.imooc.pojo" targetProject="mybatis-generator-database/src/main/java"/>
 
@@ -29,7 +28,7 @@
         <javaClientGenerator targetPackage="com.imooc.article.mapper" targetProject="mybatis-generator-database/src/main/java" type="XMLMAPPER"/>
 
         <!-- 数据库表 -->
-        <table tableName="comments"></table>
+        <table tableName="article"></table>
 
     </context>
 </generatorConfiguration>

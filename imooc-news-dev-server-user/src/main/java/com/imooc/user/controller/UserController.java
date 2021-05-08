@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,13 @@ public class UserController extends BaseController implements UserControllerApi 
         // 2 返回用户信息
         AppUserVO appUserVO = new AppUserVO();
         BeanUtils.copyProperties(user,appUserVO); // 拷贝属性 原 -拷贝-> 新
+
+        // 3 查询用户的关注数和粉丝数
+        Integer FansCounts = getCountsFromRedis(REDIS_WRITER_FANS_COUNTS + ":" + userId);
+        Integer followCounts = getCountsFromRedis(REDIS_MY_FOLLOW_COUNTS + ":" + userId);
+
+        appUserVO.setMyFansCounts(FansCounts);
+        appUserVO.setMyFollowCounts(followCounts);
 
         return GraceJSONResult.ok(appUserVO);
     }
@@ -79,6 +87,32 @@ public class UserController extends BaseController implements UserControllerApi 
 
         return GraceJSONResult.ok();
     }
+
+    @Override
+    public GraceJSONResult getUserByIds(String userIds) {
+
+        if (StringUtils.isBlank(userIds)){
+            return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_NOT_EXIST_ERROR);
+        }
+
+        List<AppUserVO> publisherList = new ArrayList<>();
+        List<String> userIdList = JsonUtils.jsonToList(userIds, String.class);
+        for (String userId:userIdList){
+            // 1 根据userId查询用户信息
+            AppUser user = getUser(userId);
+
+            // 2 返回用户信息
+            AppUserVO UserVO = new AppUserVO();
+            BeanUtils.copyProperties(user,UserVO); // 拷贝属性 原 -拷贝-> 新
+
+            // 3 添加到publisherList
+            publisherList.add(UserVO);
+        }
+
+        return GraceJSONResult.ok(publisherList);
+    }
+
+
 
     private AppUser getUser(String userId){
 

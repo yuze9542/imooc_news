@@ -15,10 +15,22 @@ import java.io.IOException;
 @RequestMapping("fs")
 public interface FileUploadControllerApi {
 
+    /**
+     * 上传单图 单文件
+     * @param userId
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/uploadFace")
     @ApiOperation(value = "上传用户头像",httpMethod = "POST")
     public GraceJSONResult uploadFace(@RequestParam String userId,
                                       MultipartFile file) throws IOException;
+
+    @PostMapping("/uploadSomeFiles")
+    @ApiOperation(value = "上传多个文件",httpMethod = "POST")
+    public GraceJSONResult uploadSomeFiles(@RequestParam String userId,
+                                      MultipartFile[] files) throws IOException;
 
     /**
      * 文件上传到mongodb的gridFS中

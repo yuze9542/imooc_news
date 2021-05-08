@@ -143,6 +143,8 @@ public class AdminMngController extends BaseController implements AdminMngContro
         return GraceJSONResult.ok();
     }
 
+
+
     private void checkAdminExist(String username){
         AdminUser adminUser = adminUserService.queryAdminByUsername(username);
         if (adminUser!=null){

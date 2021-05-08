@@ -26,6 +26,8 @@ import sun.misc.BASE64Encoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class FileUploadController implements FileUploadControllerApi {
@@ -40,6 +42,7 @@ public class FileUploadController implements FileUploadControllerApi {
 
     @Autowired
     private GridFSBucket gridFSBucket;
+
 
     @Override
     public GraceJSONResult uploadFace(String userId, MultipartFile file) throws IOException {
@@ -72,6 +75,54 @@ public class FileUploadController implements FileUploadControllerApi {
         }
         logger.info("path = {}",path);
         return GraceJSONResult.ok(path);
+    }
+
+    @Override
+    public GraceJSONResult uploadSomeFiles(String userId, MultipartFile[] files) throws IOException {
+
+        // 声明一个list 用于存放多个图片的地址路径 返回到前端
+        List<String> imageUrlList = new ArrayList<>();
+
+        if (files!=null && files.length>0){
+            for (MultipartFile file:files){
+                String path ="";
+                if (file != null){
+                    // 获得文件名
+                    String  fileName = file.getOriginalFilename();
+                    // 判断文件名不能为空
+                    if (StringUtils.isBlank(fileName)){
+                        return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_UPLOAD_FAILD);
+                    }else {
+                        String fileNameArr[] = fileName.split("\\.");
+                        //获得后缀
+                        String suffix = fileNameArr[fileNameArr.length-1];
+                        if (!suffix.equalsIgnoreCase("png") &&
+                                !suffix.equalsIgnoreCase("jpg") &&
+                                !suffix.equalsIgnoreCase("jpeg")){
+                            // return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_FORMATTER_FAILD);
+                            continue;
+                        }
+                        path = uploadService.uploadFdfs(file, suffix);
+                    }
+
+                }else {
+                    //return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_UPLOAD_NULL_ERROR);
+                    continue;
+                }
+                if (StringUtils.isNotBlank(path)){
+                    path = "http://1.15.44.134:8888/" + path;
+                    // TODO 放入前端之前应该先做一次审核
+                    imageUrlList.add(path);
+                }else {
+//                    return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_UPLOAD_FAILD);
+                    continue;
+                }
+                logger.info("path = {}",path);
+            }
+        }
+
+        return GraceJSONResult.ok(imageUrlList);
+
     }
 
     @Override

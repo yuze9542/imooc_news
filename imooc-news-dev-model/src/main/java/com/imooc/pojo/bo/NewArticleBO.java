@@ -1,6 +1,7 @@
 package com.imooc.pojo.bo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;
@@ -12,6 +13,7 @@ import java.util.Date;
 /**
  * 用户发文的BO
  */
+@Data
 public class NewArticleBO {
 
     @NotBlank(message = "文章标题不能为空")
@@ -42,81 +44,5 @@ public class NewArticleBO {
     @NotBlank(message = "用户未登录")
     private String publishUserId;
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Integer getArticleType() {
-        return articleType;
-    }
-
-    public void setArticleType(Integer articleType) {
-        this.articleType = articleType;
-    }
-
-    public String getArticleCover() {
-        return articleCover;
-    }
-
-    public void setArticleCover(String articleCover) {
-        this.articleCover = articleCover;
-    }
-
-    public Integer getIsAppoint() {
-        return isAppoint;
-    }
-
-    public void setIsAppoint(Integer isAppoint) {
-        this.isAppoint = isAppoint;
-    }
-
-    public String getPublishUserId() {
-        return publishUserId;
-    }
-
-    public void setPublishUserId(String publishUserId) {
-        this.publishUserId = publishUserId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Date getPublishTime() {
-        return publishTime;
-    }
-
-    public void setPublishTime(Date publishTime) {
-        this.publishTime = publishTime;
-    }
-
-    @Override
-    public String toString() {
-        return "NewArticleBO{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", categoryId=" + categoryId +
-                ", articleType=" + articleType +
-                ", articleCover='" + articleCover + '\'' +
-                ", isAppoint=" + isAppoint +
-                ", publishTime=" + publishTime +
-                ", publishUserId='" + publishUserId + '\'' +
-                '}';
-    }
 }
