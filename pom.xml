@@ -15,6 +15,7 @@
         <module>imooc-news-dev-service-files</module>
         <module>imooc-news-service-admin</module>
         <module>imooc-news-dev-service-article</module>
+        <module>springcloud-eureka</module>
     </modules>
 
 
@@ -133,6 +134,12 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+<!--            freemarker-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-freemarker</artifactId>
+                <version>2.2.5.RELEASE</version>
+            </dependency>
 <!--            热部署-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

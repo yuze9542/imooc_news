@@ -16,6 +16,9 @@ public interface ArticleService {
     // 更新定时发布为及时发布
     public void updateAppointToPublish();
 
+    // 更新单条文章发布为及时发布
+    public void updateArticleToPublish(String articleId);
+
     // 用户列表  --->   查询我的文章列表
     public PagedGridResult queryMyArticleList(String userId, String keyword, Integer status,
                                               Date startDate, Date endDate,

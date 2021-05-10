@@ -8,25 +8,38 @@ import com.imooc.enums.ArticleReviewStatus;
 import com.imooc.enums.YesOrNo;
 import com.imooc.grace.result.GraceJSONResult;
 import com.imooc.grace.result.ResponseStatusEnum;
-import com.imooc.pojo.Article;
 import com.imooc.pojo.Category;
 import com.imooc.pojo.bo.NewArticleBO;
+import com.imooc.pojo.vo.ArticleDetailVO;
 import com.imooc.utils.JsonUtils;
 import com.imooc.utils.PagedGridResult;
-import io.swagger.models.auth.In;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class ArticleController extends BaseController implements ArticleControllerApi {
 
+    @Value("${freemarker.html.article}")
+    private String articlePath;
     @Autowired
     private ArticleService articleService;
 
@@ -107,6 +120,7 @@ public class ArticleController extends BaseController implements ArticleControll
     }
 
     @Override
+    @Transactional
     public GraceJSONResult doReview(String articleId, Integer passOrNot) {
         Integer pendingStatus = null;
         if (passOrNot == YesOrNo.YES.type){
@@ -121,7 +135,62 @@ public class ArticleController extends BaseController implements ArticleControll
 
         articleService.updateArticlesStatus(articleId,pendingStatus);
 
+        if (pendingStatus == ArticleReviewStatus.SUCCESS.type){
+            // 审核成功 生成文章详情页静态html
+            try {
+                createArticleIdHTML(articleId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return GraceJSONResult.ok();
+    }
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    // 文章生成HTML
+    private void createArticleIdHTML(String articleId) throws Exception {
+
+        // 0. 配置freemarker基本环境
+        Configuration cfg = new Configuration(Configuration.getVersion());
+        // 声明freemarker模板所需要加载的目录的位置
+        String classpath = this.getClass().getResource("/").getPath();
+        cfg.setDirectoryForTemplateLoading(new File(classpath + "templates"));
+
+        // 1. 获得现有的模板ftl文件
+        Template template = cfg.getTemplate("detail.ftl", "utf-8");
+
+        // 获得文章的详情数据
+        ArticleDetailVO articleDetail = getArticleDetail(articleId);
+
+
+        // 3. 融合动态数据和ftl，生成html
+        File tempDic = new File(articlePath);
+        if (!tempDic.exists()) {
+            tempDic.mkdirs();
+        }
+        articlePath = articlePath + File.separator + articleDetail.getId() + ".html";
+        Map<String, Object> map = new HashMap<>();
+        map.put("articleDetail",articleDetail);
+        Writer out = new FileWriter(articlePath);
+        template.process(map, out);
+        out.close();
+    }
+
+    // 发起远程调用rest 调用 文章detail
+    public ArticleDetailVO getArticleDetail(String articleId) {
+        String url
+                = "http://www.imoocnews.com:8001/portal/article/detail?articleId={1}" ;
+        ResponseEntity<GraceJSONResult> forEntity = restTemplate.getForEntity(url, GraceJSONResult.class,articleId);
+        GraceJSONResult bodyResult = forEntity.getBody();
+        ArticleDetailVO detailVO = null;
+        if (bodyResult.getStatus() == 200) {
+            String detailJson = JsonUtils.objectToJson(bodyResult.getData());
+            detailVO = JsonUtils.jsonToPojo(detailJson, ArticleDetailVO.class);
+        }
+        return detailVO;
     }
 
     @Override

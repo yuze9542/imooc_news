@@ -42,6 +42,17 @@ spring:
     mongodb:
       uri: mongodb://yu:root@1.15.44.134:27017
       database: imooc-news
+  freemarker:
+    charset: UTF-8
+    content-type: text/html
+    suffix: .ftl
+    template-loader-path: classpath:/templates/ # resources里的
+  rabbitmq:
+    host: 1.15.44.134
+    port: 5672
+    username: yuze
+    password: 123456
+    virtual-host: "/"
 
 ############################################################
 #
@@ -65,3 +76,7 @@ mapper:
 pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
+freemarker:
+  html:
+    target: /home/yuze/IdeaProjects/imooc_news/imooc-news-dev/freemarker_html
+    article: /home/yuze/IdeaProjects/imooc_news/apache-tomcat-9.0.45/webapps/imooc-news/portal/a

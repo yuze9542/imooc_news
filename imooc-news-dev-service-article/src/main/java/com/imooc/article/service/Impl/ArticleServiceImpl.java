@@ -2,6 +2,7 @@ package com.imooc.article.service.Impl;
 
 import com.github.pagehelper.PageHelper;
 import com.imooc.api.BaseService;
+import com.imooc.api.config.RabbitMQDelayConfig;
 import com.imooc.article.mapper.ArticleMapper;
 import com.imooc.article.mapper.ArticleMapperCustom;
 import com.imooc.article.service.ArticleService;
@@ -13,9 +14,15 @@ import com.imooc.grace.result.ResponseStatusEnum;
 import com.imooc.pojo.Article;
 import com.imooc.pojo.Category;
 import com.imooc.pojo.bo.NewArticleBO;
+import com.imooc.utils.DateUtil;
 import com.imooc.utils.PagedGridResult;
 import org.apache.commons.lang3.StringUtils;
 import org.n3r.idworker.Sid;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +35,8 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl extends BaseService implements ArticleService {
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
     @Autowired
     private ArticleMapper articleMapper;
     @Autowired
@@ -62,6 +71,34 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         if (insert!=1){
             GraceException.display(ResponseStatusEnum.ARTICLE_CREATE_ERROR);
         }
+        // FIXME 此处做rabbitmq
+        //  发送延迟消息到mq 计算定时发布时间和当前时间的差 则为往后延迟的时间
+        if (article.getIsAppoint() == ArticleAppointType.TIMING.type){
+
+            Date publishTime = bo.getPublishTime(); // 发布时间
+            Date nowTime = new Date();
+
+            int delayTimes = (int) (publishTime.getTime() - nowTime.getTime());
+//            int delayTimes = 10 * 1000;
+            System.out.println("时间差");
+            System.out.println(DateUtil.timeBetween(nowTime,publishTime));
+            MessagePostProcessor messagePostProcessor =new MessagePostProcessor() {
+                @Override
+                public Message postProcessMessage(Message message) throws AmqpException {
+                    // 设置消息的持久
+                    message.getMessageProperties()
+                            .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                    // 设置消息延迟的时间
+                    message.getMessageProperties().setDelay(delayTimes);
+                    return message;
+                }
+            };
+
+            rabbitTemplate.convertAndSend(RabbitMQDelayConfig.EXCHANGE_DELAY,
+                    "delay.display",
+                    articleId,
+                    messagePostProcessor);
+        }
 
         //TODO 通过阿里云服务智能实现对文本检测
         // 智能检测通过则标记状态为通过 不通过则需要人工审核
@@ -81,6 +118,15 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     public void updateAppointToPublish() {
 
         articleMapperCustom.updateAppointToPublish();
+    }
+
+    @Override
+    @Transactional
+    public void updateArticleToPublish(String articleId) {
+        Article article = new Article();
+        article.setId(articleId);
+        article.setIsAppoint(ArticleAppointType.IMMEDIATELY.type);
+        articleMapper.updateByPrimaryKeySelective(article);
     }
 
     @Override
