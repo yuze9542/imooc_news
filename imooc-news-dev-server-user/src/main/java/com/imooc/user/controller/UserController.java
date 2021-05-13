@@ -10,9 +10,12 @@ import com.imooc.pojo.vo.AppUserVO;
 import com.imooc.pojo.vo.UserAccountInfoVo;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.JsonUtils;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,10 +28,20 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@DefaultProperties(defaultFallback = "defaultFallback")
 public class UserController extends BaseController implements UserControllerApi {
 
     @Autowired
     public UserService userService;
+
+    @Value("${server.port}")
+    private String myPort;
+
+    public GraceJSONResult defaultFallback(){
+        System.out.println("全局降级");
+        return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_ERROR_GLOBAL);
+    }
+
 
     @Override
     public GraceJSONResult getUserInfo(String userId) {
@@ -74,13 +87,12 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
-    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO updateUserInfoBO,
-                                          BindingResult result) {
+    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO updateUserInfoBO) {
         // 0 校验BO
-        if (result.hasErrors()){
-            Map<String, String> errors = getErrors(result);
-            return GraceJSONResult.errorMap(errors);
-        }
+//        if (result.hasErrors()){
+//            Map<String, String> errors = getErrors(result);
+//            return GraceJSONResult.errorMap(errors);
+//        }
 
         // 1 执行更新操作
         userService.updateUserInfo(updateUserInfoBO);
@@ -89,7 +101,64 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
+    @HystrixCommand
+    // (全局降级开启后这个需要去掉 要不然会走这个降级方法) (fallbackMethod = "getUserByIdsFallback")   // 添加熔断机制
+    // @HystrixCommand 这个还是要加
     public GraceJSONResult getUserByIds(String userIds) {
+
+        // 1 手动出发异常
+//        int a = 1 / 0;
+
+        // 2 模拟超时异常
+//        try {
+//            Thread.sleep(12000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
+        System.out.println("myPort:"+myPort);
+        if (StringUtils.isBlank(userIds)){
+            return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_NOT_EXIST_ERROR);
+        }
+
+        List<AppUserVO> publisherList = new ArrayList<>();
+        List<String> userIdList = JsonUtils.jsonToList(userIds, String.class);
+        for (String userId:userIdList){
+            // 1 根据userId查询用户信息
+            AppUser user = getUser(userId);
+
+            // 2 返回用户信息
+            AppUserVO UserVO = new AppUserVO();
+            BeanUtils.copyProperties(user,UserVO); // 拷贝属性 原 -拷贝-> 新
+
+            // 3 添加到publisherList
+            publisherList.add(UserVO);
+        }
+
+        return GraceJSONResult.ok(publisherList);
+    }
+
+    // 降级方法
+    public GraceJSONResult getUserByIdsFallback(String userIds) {
+
+        System.out.println(" 进入降级方法: getUserByIdsFallback ");
+
+//        List<AppUserVO> publisherList = new ArrayList<>();
+//        List<String> userIdList = JsonUtils.jsonToList(userIds, String.class);
+//        for (String userId:userIdList){
+//            // 1 根据userId查询用户信息
+////            AppUser user = new AppUser();
+//
+//            // 2 返回用户信息
+//            AppUserVO UserVO = new AppUserVO();
+////            BeanUtils.copyProperties(user,UserVO); // 拷贝属性 原 -拷贝-> 新
+//
+//            // 3 添加到publisherList
+//            publisherList.add(UserVO);
+//        }
+//
+//        return GraceJSONResult.ok(publisherList);
 
         if (StringUtils.isBlank(userIds)){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_NOT_EXIST_ERROR);

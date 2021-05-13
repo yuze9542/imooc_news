@@ -18,6 +18,7 @@ import freemarker.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -42,6 +43,7 @@ public class ArticleController extends BaseController implements ArticleControll
     private String articlePath;
     @Autowired
     private ArticleService articleService;
+
 
     @Override
     public GraceJSONResult createArticle(@Valid NewArticleBO bo, BindingResult result) {

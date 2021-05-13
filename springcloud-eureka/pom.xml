@@ -16,6 +16,11 @@
             <artifactId>imooc-news-dev-service-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-eureka-server</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

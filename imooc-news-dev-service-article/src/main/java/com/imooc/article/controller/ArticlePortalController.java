@@ -2,6 +2,7 @@ package com.imooc.article.controller;
 
 import com.imooc.api.BaseController;
 import com.imooc.api.controller.article.ArticlePortalControllerApi;
+import com.imooc.api.controller.user.UserControllerApi;
 import com.imooc.article.service.ArticlePortalService;
 import com.imooc.grace.result.GraceJSONResult;
 import com.imooc.pojo.Article;
@@ -14,6 +15,8 @@ import com.imooc.utils.PagedGridResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +36,13 @@ public class ArticlePortalController extends BaseController implements ArticlePo
 
     @Autowired
     private ArticlePortalService articlePortalService;
+
+    // 注入服务发现
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
+    @Autowired // 因为feign
+    private UserControllerApi userControllerApi;
 
     @Override
     public GraceJSONResult list(String keyword, Integer category, Integer page, Integer pageSize) {
@@ -148,9 +158,19 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         // 发起redis 的批量 mget 批量查询api 获得对应值
         List<String> readCountsRedisList = redis.mget(idList);
 
+        String serviceId = "SERVICE-USER";
+        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+        ServiceInstance userService = instances.get(0);// 服务实例
+
+
+        String url = "http://"+userService.getHost()+":"+
+                userService.getPort()+
+                "/user/getUserByIds?userIds="+ JsonUtils.objectToJson(idSet);
 
         // 2 发起远程调用 (restTemplate) 请求用户微服务获得用户(userId 发布者) 的列表
-        String url = "http://user.imoocnews.com:8003/user/getUserByIds?userIds="+ JsonUtils.objectToJson(idSet);
+//        String url = "http://user.imoocnews.com:8003/
+//        user/getUserByIds?userIds="+
+//        JsonUtils.objectToJson(idSet);
         ResponseEntity<GraceJSONResult> forEntity = restTemplate.getForEntity(url, GraceJSONResult.class);
         List<AppUserVO> publisherList = null;
         if (forEntity.getBody().getStatus() == 200){
@@ -207,5 +227,31 @@ public class ArticlePortalController extends BaseController implements ArticlePo
 
         }
         return null;
+    }
+
+    public List<AppUserVO> getPublisherList(Set idSet){
+
+        String serviceId = "SERVICE-USER";
+        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+        ServiceInstance userService = instances.get(0);// 服务实例
+
+        String url = "http://" + serviceId + "/user/getUserByIds?userIds="
+                + JsonUtils.objectToJson(idSet);
+        GraceJSONResult forEntity = userControllerApi.getUserByIds(JsonUtils.objectToJson(idSet));
+//        String url = "http://"+userService.getHost()+":"+
+//                userService.getPort()+
+//                "/user/getUserByIds?userIds="+ JsonUtils.objectToJson(idSet);
+
+//        String url = "http://user.imoocnews.com:8003/user/getUserByIds?userIds="+ JsonUtils.objectToJson(idSet);
+
+//        ResponseEntity<GraceJSONResult> forEntity = restTemplate.getForEntity(url, GraceJSONResult.class);
+        List<AppUserVO> publisherList = null;
+        if (forEntity.getStatus() == 200){
+            String userJson = JsonUtils.objectToJson(forEntity.getData());
+            publisherList = JsonUtils.jsonToList(userJson, AppUserVO.class);
+        }else {
+            publisherList = new ArrayList<>();
+        }
+        return publisherList;
     }
 }

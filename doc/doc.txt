@@ -4,3 +4,13 @@
                   fastDFS
                   OSS
                   GridFS
+
+5.11
+
+    负载均衡 客户端
+                                            订单A
+    客户端     ->  负载均衡器   ->    订单B
+                       (nginx)              订单C
+
+
+    ribbon = restTemplate + loadBalanced

@@ -80,3 +80,46 @@ freemarker:
   html:
     target: /home/yuze/IdeaProjects/imooc_news/imooc-news-dev/freemarker_html
     article: /home/yuze/IdeaProjects/imooc_news/apache-tomcat-9.0.45/webapps/imooc-news/portal/a
+
+eureka:
+  # 自定义eureka server的信息
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    # 所有的微服务都必须注册到eureka中
+    register-with-eureka: true
+    # 从注册中心获得检索服务实例
+    fetch-registry: true
+    # 注册中心的服务地址
+    service-url:
+      #defaultZone: http://${eureka.server.hostname}:${eureka.server.port}/eureka/
+      defaultZone: http://eureka-cluster-7001:7001/eureka/,http://eureka-cluster-7002:7002/eureka/,http://eureka-cluster-7003:7003/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 3      # 调整微服务（eureka client）和注册中心（eureka server）的心跳时间
+    lease-expiration-duration-in-seconds: 5   # eureka 举例最近的一次心跳等待提出的时间，默认90s
+
+
+# 配置自定义service名称
+SERVICE-USER:
+  ribbon:
+    NFLoadBanlancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+ribbon:
+  ConnectTimeout: 10000  #创建连接的超时时间
+  ReadTimeOut: 5000   # 在创建好链接以后 调用接口的超时时间
+  MaxAutoRetries: 1 # 最大重试次数
+  MaxAutoRetriesNextServer: 2 # 最大重试实例
+
+
+feign:
+  client:
+    config:
+      # 配置服务提供方名称
+      service-user:
+        loggerLevel: FULL
+  hystrix:
+    enabled: true
+logging:
+  level:
+    com.imooc.api.controller.user.UserControllerApi: debug

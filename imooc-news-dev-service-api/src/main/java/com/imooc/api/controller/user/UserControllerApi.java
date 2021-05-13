@@ -1,9 +1,12 @@
 package com.imooc.api.controller.user;
 
+import com.imooc.api.config.MyServiceList;
+import com.imooc.api.controller.user.fallback.UserControllerFactoryFallback;
 import com.imooc.grace.result.GraceJSONResult;
 import com.imooc.pojo.bo.UpdateUserInfoBO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,8 @@ import javax.validation.Valid;
 
 @Api(value = "用户相关信息 ")
 @RequestMapping("user")
+// 服务端降级方法
+@FeignClient(value = MyServiceList.SERVICE_USER,fallbackFactory = UserControllerFactoryFallback.class)
 public interface UserControllerApi {
 
     /**
@@ -38,8 +43,7 @@ public interface UserControllerApi {
      */
     @PostMapping("/updateUserInfo")
     @ApiOperation(value = "完善用户信息",httpMethod = "POST")
-    public GraceJSONResult updateUserInfo(@RequestBody @Valid UpdateUserInfoBO updateUserInfoBO,
-                                          BindingResult result);
+    public GraceJSONResult updateUserInfo(@RequestBody @Valid UpdateUserInfoBO updateUserInfoBO);
 
     /**
      * restTemplate

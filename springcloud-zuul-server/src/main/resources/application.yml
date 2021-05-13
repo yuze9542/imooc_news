@@ -1,0 +1,55 @@
+############################################################
+#
+# zuul
+# web访问端口号  约定：7070
+#
+############################################################
+server:
+  port: 7000
+  tomcat:
+    uri-encoding: UTF-8
+
+############################################################
+#
+# 配置项目信息
+#
+############################################################
+spring:
+  application:
+    name: springcloud-zuul-server
+
+  redis:
+    database: 0
+    host: 1.15.44.134
+    port: 6379
+#    password: yuze123
+
+
+############################################################
+#
+# 网关
+#
+############################################################
+
+# 路由规则:   http://[网关地址]:[端口号]/[prefix]/[微服务实例id]/请求地址路径
+zuul:
+  routes:
+    service-article: /service-article/**   # 简写
+#      path: /service-article/**   # 请求路径 ** 标识任何url都能得到 然后得到转发
+#      service-id: service-article # 请求转发的微服务实例id
+#      url: http://localhost:8001    # 请求转发到指定的微服务所在的ip地址
+  prefix: /api
+
+
+eureka:
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-cluster-7001:7001/eureka/,http://eureka-cluster-7002:7002/eureka/,http://eureka-cluster-7003:7003/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 3      # 调整微服务（eureka client）和注册中心（eureka server）的心跳时间
+    lease-expiration-duration-in-seconds: 5   # eureka 举例最近的一次心跳等待提出的时间，默认90s

@@ -1,17 +1,17 @@
-package com.imooc.eureka;
+package com.imooc.zuul;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.ComponentScan;
-import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication  (exclude = {DataSourceAutoConfiguration.class,
                     MongoAutoConfiguration.class})
-@EnableEurekaServer
+@ComponentScan(basePackages = {"com.imooc","org.n3r.idworker"})
+@EnableZuulProxy // @EnableZuulServer的升级版 当使用ribbon eureka zuul 时使用
+
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

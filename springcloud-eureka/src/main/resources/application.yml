@@ -8,7 +8,6 @@ server:
   port: 7000
   tomcat:
     uri-encoding: UTF-8
-    max-swallow-size: -1  # tomcat默认大小2M，超过2M的文件不会被捕获，需要调整此处大小为100MB或者-1即可
 
 ############################################################
 #
@@ -18,3 +17,24 @@ server:
 spring:
   application:
     name: springcloud-eureka
+#  rabbitmq:
+#    host: 1.15.44.134
+#    port: 5672
+#    username: yuze
+#    password: 123456
+#    virtual-host: "/"
+  redis:
+    database: 0
+    host: 1.15.44.134
+    port: 6379
+#    password: yuze123
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # 取消自身注册
+    register-with-eureka: false
+    # 不要获得服务列表
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:7000/eureka/
