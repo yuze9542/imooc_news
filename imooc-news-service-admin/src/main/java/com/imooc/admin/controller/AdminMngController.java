@@ -36,7 +36,9 @@ public class AdminMngController extends BaseController implements AdminMngContro
     private FaceCompareUtils faceCompareUtils;
 
     @Override
-    public GraceJSONResult adminLogin(AdminLoginBO bo, HttpServletRequest request, HttpServletResponse response) {
+    public GraceJSONResult adminLogin(AdminLoginBO bo,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
 
         // 0 验证bo里的username和password不为空
         // 1 查询admin用户

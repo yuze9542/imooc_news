@@ -20,7 +20,8 @@
         </jdbcConnection>
 
         <!-- 对应生成的pojo所在包 -->
-        <javaModelGenerator targetPackage="com.imooc.pojo" targetProject="mybatis-generator-database/src/main/java"/>
+        <javaModelGenerator targetPackage="com.imooc.pojo"
+                            targetProject="mybatis-generator-database/src/main/java"/>
 
 		<!-- 对应生成的mapper所在目录 -->
         <sqlMapGenerator targetPackage="mapper.user" targetProject="mybatis-generator-database/src/main/resources"/>
